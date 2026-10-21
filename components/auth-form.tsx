@@ -16,18 +16,24 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (pending) return
     setError("")
     setPending(true)
-    const result = isSignUp
-      ? await authClient.signUp.email({ name, email, password })
-      : await authClient.signIn.email({ email, password })
-    setPending(false)
-    if (result.error) {
-      setError("We couldn&apos;t complete that request. Check your details and try again.")
-      return
+    try {
+      const result = isSignUp
+        ? await authClient.signUp.email({ name: name.trim(), email: email.trim(), password })
+        : await authClient.signIn.email({ email: email.trim(), password })
+      if (result.error) {
+        setError("We couldn't complete that request. Check your details and try again.")
+        return
+      }
+      router.push("/")
+      router.refresh()
+    } catch {
+      setError("We couldn't reach HF right now. Please try again.")
+    } finally {
+      setPending(false)
     }
-    router.push("/")
-    router.refresh()
   }
 
   return (
