@@ -3,27 +3,10 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'HF Restaurant — Made with feeling',
-  description: 'Bold flavours, familiar comforts, and a little something unexpected. Explore the HF Restaurant menu.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  title: "HF Restaurant | Made with feeling",
+  description: "Bold flavours, familiar comforts, and a table made for sharing in Lahore.",
 }
+
 
 export const viewport: Viewport = {
   colorScheme: 'light dark',
