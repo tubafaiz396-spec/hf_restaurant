@@ -22,6 +22,12 @@ export default function Home() {
   const [cartOpen, setCartOpen] = useState(false)
   const [toast, setToast] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
+  const [welcomeOpen, setWelcomeOpen] = useState(true)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [orderPlaced, setOrderPlaced] = useState(false)
+  const [customerName, setCustomerName] = useState("")
+  const [customerPhone, setCustomerPhone] = useState("")
+  const [customerAddress, setCustomerAddress] = useState("")
 
   const filtered = useMemo(() => products.filter((item) => (activeCategory === "All" || item.category === activeCategory) && `${item.name} ${item.description}`.toLowerCase().includes(search.toLowerCase())), [activeCategory, search])
   const count = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -34,6 +40,17 @@ export default function Home() {
     window.setTimeout(() => setToast(""), 2200)
   }
   function updateQuantity(id: number, delta: number) { setCart((current) => current.map((item) => item.id === id ? { ...item, quantity: item.quantity + delta } : item).filter((item) => item.quantity > 0)) }
+  function beginCheckout() {
+    if (!cart.length) return
+    setCartOpen(false)
+    setCheckoutOpen(true)
+  }
+  function placeOrder(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!customerName.trim() || !customerPhone.trim() || !customerAddress.trim()) return
+    setCheckoutOpen(false)
+    setOrderPlaced(true)
+  }
 
   return (
     <main className="site-shell">
@@ -62,7 +79,10 @@ export default function Home() {
       <footer className="footer"><div className="container footer-grid"><div><a className="brand footer-brand" href="#top"><span className="brand-mark">HF</span><span><strong>HF</strong> Restaurant</span></a><p>Good food, good mood.<br />Developed by Tuba Hassan.</p></div><div><p className="footer-label">Explore</p><a href="#menu">Menu</a><a href="#story">Our story</a><a href="#offers">Offers</a></div><div><p className="footer-label">Say hello</p><a href="mailto:hello@hfrestaurant.com">hello@hfrestaurant.com</a><a href="#visit">Find us · Lahore</a></div><div className="social"><Star size={19} /><span>Follow along<br /><strong>@hf.restaurant</strong></span></div></div><div className="container footer-bottom"><span>© 2026 HF Restaurant. Sample menu content.</span><span>Made for sharing.</span></div></footer>
 
       {toast && <div className="toast" role="status">{toast}</div>}
-      {cartOpen && <div className="drawer-backdrop" onClick={() => setCartOpen(false)}><aside className="cart-drawer" onClick={(e) => e.stopPropagation()}><div className="drawer-head"><div><p className="eyebrow">Your order</p><h2>Your bag</h2></div><button className="icon-button" onClick={() => setCartOpen(false)} aria-label="Close bag"><X size={20} /></button></div>{cart.length === 0 ? <div className="empty-cart"><ShoppingBag size={32} /><p>Your bag is waiting for something delicious.</p><button className="button button-dark" onClick={() => setCartOpen(false)}>Keep browsing</button></div> : <><div className="cart-items">{cart.map((item) => <div className="cart-item" key={item.id}><img src={item.image} alt="" /><div><h3>{item.name}</h3><strong>${(item.price * item.quantity).toFixed(2)}</strong><div className="quantity"><button onClick={() => updateQuantity(item.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div></div>)}</div><div className="cart-summary"><div><span>Subtotal</span><strong>${total.toFixed(2)}</strong></div><p>Delivery and taxes calculated at checkout.</p><button className="button button-dark full" onClick={() => setToast("Checkout is ready for your authenticated account")}>Continue to checkout <ArrowRight size={16} /></button></div></>}</aside></div>}
+      {cartOpen && <div className="drawer-backdrop" onClick={() => setCartOpen(false)}><aside className="cart-drawer" onClick={(e) => e.stopPropagation()}><div className="drawer-head"><div><p className="eyebrow">Your order</p><h2>Your bag</h2></div><button className="icon-button" onClick={() => setCartOpen(false)} aria-label="Close bag"><X size={20} /></button></div>{cart.length === 0 ? <div className="empty-cart"><ShoppingBag size={32} /><p>Your bag is waiting for something delicious.</p><button className="button button-dark" onClick={() => setCartOpen(false)}>Keep browsing</button></div> : <><div className="cart-items">{cart.map((item) => <div className="cart-item" key={item.id}><img src={item.image} alt="" /><div><h3>{item.name}</h3><strong>${(item.price * item.quantity).toFixed(2)}</strong><div className="quantity"><button onClick={() => updateQuantity(item.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div></div>)}</div><div className="cart-summary"><div><span>Subtotal</span><strong>${total.toFixed(2)}</strong></div><p>Delivery and taxes calculated at checkout.</p><button className="button button-dark full" onClick={beginCheckout}>Continue to checkout <ArrowRight size={16} /></button></div></>}</aside></div>}
+      {welcomeOpen && <div className="welcome-backdrop"><section className="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><div className="welcome-mark">HF</div><p className="eyebrow">Welcome to HF Restaurant</p><h2 id="welcome-title">Good food,<br /><em>good mood.</em></h2><p>Explore bold flavours, comforting favourites, and a table made for sharing.</p><button className="button button-dark full" onClick={() => setWelcomeOpen(false)}>Explore the menu <ArrowRight size={16} /></button><small>Developed by Tuba Hassan</small></section></div>}
+      {checkoutOpen && <div className="drawer-backdrop"><section className="checkout-card" role="dialog" aria-modal="true" aria-labelledby="checkout-title"><div className="drawer-head"><div><p className="eyebrow">Guest checkout</p><h2 id="checkout-title">Almost there.</h2></div><button className="icon-button" onClick={() => setCheckoutOpen(false)} aria-label="Close checkout"><X size={20} /></button></div><form onSubmit={placeOrder} className="checkout-form"><label>Name<input required value={customerName} onChange={(event) => setCustomerName(event.target.value)} placeholder="Your name" /></label><label>Phone<input required value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} placeholder="03XX XXXXXXX" inputMode="tel" /></label><label>Delivery address<textarea required value={customerAddress} onChange={(event) => setCustomerAddress(event.target.value)} placeholder="Where should we bring your order?" rows={3} /></label><div className="checkout-total"><span>Total · Cash on delivery</span><strong>${total.toFixed(2)}</strong></div><button className="button button-dark full" type="submit">Place order <ArrowRight size={16} /></button></form></section></div>}
+      {orderPlaced && <div className="welcome-backdrop"><section className="welcome-card confirmation-card" role="dialog" aria-modal="true" aria-labelledby="confirmation-title"><div className="success-mark">✓</div><p className="eyebrow">Order received</p><h2 id="confirmation-title">Your order has<br /><em>been placed.</em></h2><p>Thanks, {customerName}. We&apos;ll deliver your order to {customerAddress} and call {customerPhone} if we need anything.</p><div className="confirmation-total"><span>Order total</span><strong>${total.toFixed(2)}</strong></div><button className="button button-dark full" onClick={() => { setOrderPlaced(false); setCart([]) }}>Continue browsing <ArrowRight size={16} /></button></section></div>}
     </main>
   )
 }
