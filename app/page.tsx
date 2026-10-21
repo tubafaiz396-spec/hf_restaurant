@@ -1,7 +1,9 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import { ArrowRight, ChevronDown, Clock3, Heart, MapPin, Minus, Plus, Search, ShoppingBag, Star, X } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
 
 const products = [
   { id: 1, name: "Smoky HF Burger", category: "Burgers", price: 12.5, description: "Charred beef, smoked cheddar, crisp lettuce and our house sauce.", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85", tag: "Bestseller" },
