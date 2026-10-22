@@ -29,7 +29,10 @@ export const auth = betterAuth({
       : []),
   ],
   session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
-  ...(process.env.NODE_ENV === "development"
-    ? { advanced: { defaultCookieAttributes: { sameSite: "none" as const, secure: true } } }
-    : {}),
+  advanced: {
+    database: { generateId: "uuid" },
+    ...(process.env.NODE_ENV === "development"
+      ? { defaultCookieAttributes: { sameSite: "none" as const, secure: true } }
+      : {}),
+  },
 })

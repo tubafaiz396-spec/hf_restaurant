@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowRight } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 
-export function AuthForm({ mode, onSuccess }: { mode: "sign-in" | "sign-up"; onSuccess?: () => void }) {
+export function AuthForm({ mode, onSuccess }: { mode: "sign-in" | "sign-up"; onSuccess?: () => void | Promise<void> }) {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -28,7 +28,7 @@ export function AuthForm({ mode, onSuccess }: { mode: "sign-in" | "sign-up"; onS
         return
       }
       if (onSuccess) {
-        onSuccess()
+        await onSuccess()
       } else {
         router.push("/")
         router.refresh()
