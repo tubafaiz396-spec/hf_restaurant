@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowRight } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 
-export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
+export function AuthForm({ mode, onSuccess }: { mode: "sign-in" | "sign-up"; onSuccess?: () => void }) {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -27,8 +27,12 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         setError("We couldn't complete that request. Check your details and try again.")
         return
       }
-      router.push("/")
-      router.refresh()
+      if (onSuccess) {
+        onSuccess()
+      } else {
+        router.push("/")
+        router.refresh()
+      }
     } catch {
       setError("We couldn't reach HF right now. Please try again.")
     } finally {
